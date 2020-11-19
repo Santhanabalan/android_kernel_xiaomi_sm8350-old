@@ -61,6 +61,7 @@ static inline int __lse_atomic_add_return##name(int i, atomic_t *v)	\
 									\
 	asm volatile(							\
 	__LSE_PREAMBLE							\
+	"	prfm	pstl1strm, %[v]\n"				\
 	"	ldadd" #mb "	%w[i], %w[tmp], %[v]\n"			\
 	"	add	%w[i], %w[i], %w[tmp]"				\
 	: [i] "+r" (i), [v] "+Q" (v->counter), [tmp] "=&r" (tmp)	\
@@ -81,6 +82,7 @@ static inline void __lse_atomic_and(int i, atomic_t *v)
 {
 	asm volatile(
 	__LSE_PREAMBLE
+	"	prfm	pstl1strm, %[v]\n"
 	"	mvn	%w[i], %w[i]\n"
 	"	stclr	%w[i], %[v]"
 	: [i] "+&r" (i), [v] "+Q" (v->counter)
@@ -92,6 +94,7 @@ static inline int __lse_atomic_fetch_and##name(int i, atomic_t *v)	\
 {									\
 	asm volatile(							\
 	__LSE_PREAMBLE							\
+	"	prfm	pstl1strm, %[v]\n"				\
 	"	mvn	%w[i], %w[i]\n"					\
 	"	ldclr" #mb "	%w[i], %w[i], %[v]"			\
 	: [i] "+&r" (i), [v] "+Q" (v->counter)				\
@@ -112,6 +115,7 @@ static inline void __lse_atomic_sub(int i, atomic_t *v)
 {
 	asm volatile(
 	__LSE_PREAMBLE
+	"	prfm	pstl1strm, %[v]\n"
 	"	neg	%w[i], %w[i]\n"
 	"	stadd	%w[i], %[v]"
 	: [i] "+&r" (i), [v] "+Q" (v->counter)
@@ -125,6 +129,7 @@ static inline int __lse_atomic_sub_return##name(int i, atomic_t *v)	\
 									\
 	asm volatile(							\
 	__LSE_PREAMBLE							\
+	"	prfm	pstl1strm, %[v]\n"				\
 	"	neg	%w[i], %w[i]\n"					\
 	"	ldadd" #mb "	%w[i], %w[tmp], %[v]\n"			\
 	"	add	%w[i], %w[i], %w[tmp]"				\
@@ -147,6 +152,7 @@ static inline int __lse_atomic_fetch_sub##name(int i, atomic_t *v)	\
 {									\
 	asm volatile(							\
 	__LSE_PREAMBLE							\
+	"	prfm	pstl1strm, %[v]\n"				\
 	"	neg	%w[i], %w[i]\n"					\
 	"	ldadd" #mb "	%w[i], %w[i], %[v]"			\
 	: [i] "+&r" (i), [v] "+Q" (v->counter)				\
@@ -214,6 +220,7 @@ static inline long __lse_atomic64_add_return##name(s64 i, atomic64_t *v)\
 									\
 	asm volatile(							\
 	__LSE_PREAMBLE							\
+	"	prfm	pstl1strm, %[v]\n"				\
 	"	ldadd" #mb "	%[i], %x[tmp], %[v]\n"			\
 	"	add	%[i], %[i], %x[tmp]"				\
 	: [i] "+r" (i), [v] "+Q" (v->counter), [tmp] "=&r" (tmp)	\
@@ -234,6 +241,7 @@ static inline void __lse_atomic64_and(s64 i, atomic64_t *v)
 {
 	asm volatile(
 	__LSE_PREAMBLE
+	"	prfm	pstl1strm, %[v]\n"
 	"	mvn	%[i], %[i]\n"
 	"	stclr	%[i], %[v]"
 	: [i] "+&r" (i), [v] "+Q" (v->counter)
@@ -245,6 +253,7 @@ static inline long __lse_atomic64_fetch_and##name(s64 i, atomic64_t *v)	\
 {									\
 	asm volatile(							\
 	__LSE_PREAMBLE							\
+	"	prfm	pstl1strm, %[v]\n"				\
 	"	mvn	%[i], %[i]\n"					\
 	"	ldclr" #mb "	%[i], %[i], %[v]"			\
 	: [i] "+&r" (i), [v] "+Q" (v->counter)				\
@@ -265,6 +274,7 @@ static inline void __lse_atomic64_sub(s64 i, atomic64_t *v)
 {
 	asm volatile(
 	__LSE_PREAMBLE
+	"	prfm	pstl1strm, %[v]\n"
 	"	neg	%[i], %[i]\n"
 	"	stadd	%[i], %[v]"
 	: [i] "+&r" (i), [v] "+Q" (v->counter)
@@ -278,6 +288,7 @@ static inline long __lse_atomic64_sub_return##name(s64 i, atomic64_t *v)\
 									\
 	asm volatile(							\
 	__LSE_PREAMBLE							\
+	"	prfm	pstl1strm, %[v]\n"				\
 	"	neg	%[i], %[i]\n"					\
 	"	ldadd" #mb "	%[i], %x[tmp], %[v]\n"			\
 	"	add	%[i], %[i], %x[tmp]"				\
@@ -300,6 +311,7 @@ static inline long __lse_atomic64_fetch_sub##name(s64 i, atomic64_t *v)	\
 {									\
 	asm volatile(							\
 	__LSE_PREAMBLE							\
+	"	prfm	pstl1strm, %[v]\n"				\
 	"	neg	%[i], %[i]\n"					\
 	"	ldadd" #mb "	%[i], %[i], %[v]"			\
 	: [i] "+&r" (i), [v] "+Q" (v->counter)				\
@@ -322,6 +334,7 @@ static inline s64 __lse_atomic64_dec_if_positive(atomic64_t *v)
 
 	asm volatile(
 	__LSE_PREAMBLE
+	"	prfm	pstl1strm, %[v]\n"
 	"1:	ldr	%x[tmp], %[v]\n"
 	"	subs	%[ret], %x[tmp], #1\n"
 	"	b.lt	2f\n"
@@ -350,6 +363,7 @@ __lse__cmpxchg_case_##name##sz(volatile void *ptr,			\
 									\
 	asm volatile(							\
 	__LSE_PREAMBLE							\
+	"	prfm	pstl1strm, %[v]\n"				\
 	"	mov	%" #w "[tmp], %" #w "[old]\n"			\
 	"	cas" #mb #sfx "\t%" #w "[tmp], %" #w "[new], %[v]\n"	\
 	"	mov	%" #w "[ret], %" #w "[tmp]"			\
@@ -398,6 +412,7 @@ __lse__cmpxchg_double##name(unsigned long old1,				\
 									\
 	asm volatile(							\
 	__LSE_PREAMBLE							\
+	"	prfm	pstl1strm, %[v]\n"				\
 	"	casp" #mb "\t%[old1], %[old2], %[new1], %[new2], %[v]\n"\
 	"	eor	%[old1], %[old1], %[oldval1]\n"			\
 	"	eor	%[old2], %[old2], %[oldval2]\n"			\
