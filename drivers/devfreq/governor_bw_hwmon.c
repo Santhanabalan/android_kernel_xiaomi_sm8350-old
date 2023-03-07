@@ -39,6 +39,7 @@ struct hwmon_node {
 	unsigned int		hist_memory;
 	unsigned int		hyst_trigger_count;
 	unsigned int		hyst_length;
+	unsigned int		idle_length;
 	unsigned int		idle_mbps;
 	unsigned int		use_ab;
 	unsigned int		mbps_zones[NUM_MBPS_ZONES];
@@ -55,6 +56,7 @@ struct hwmon_node {
 	unsigned long		hyst_mbps;
 	unsigned long		hyst_trig_win;
 	unsigned long		hyst_en;
+	unsigned long		idle_en;
 	unsigned long		prev_req;
 	unsigned int		wake;
 	unsigned int		down_cnt;
@@ -295,7 +297,7 @@ static unsigned long to_mbps_zone(struct hwmon_node *node, unsigned long mbps)
 }
 
 #define MIN_MBPS	500UL
-#define HIST_PEAK_TOL	60
+#define HIST_PEAK_TOL	75
 static unsigned long get_bw_and_set_irq(struct hwmon_node *node,
 					unsigned long *freq, unsigned long *ab)
 {
@@ -378,6 +380,9 @@ static unsigned long get_bw_and_set_irq(struct hwmon_node *node,
 		node->hyst_peak = 0;
 		node->hyst_trig_win = node->hyst_length;
 		node->hyst_mbps = meas_mbps;
+		if (node->hyst_en)
+			node->hyst_en = node->hyst_length;
+
 	}
 
 	/*
@@ -387,9 +392,10 @@ static unsigned long get_bw_and_set_irq(struct hwmon_node *node,
 	if (meas_mbps >= hyst_lo_tol && meas_mbps > MIN_MBPS
 	    && !node->max_mbps) {
 		node->hyst_peak++;
-		if (node->hyst_peak >= node->hyst_trigger_count
-		    || node->hyst_en)
+		if (node->hyst_peak >= node->hyst_trigger_count) {
+			node->hyst_peak = 0;
 			node->hyst_en = node->hyst_length;
+		}
 	}
 
 	if (node->hyst_trig_win)
@@ -403,8 +409,13 @@ static unsigned long get_bw_and_set_irq(struct hwmon_node *node,
 	}
 
 	if (node->hyst_en) {
-		if (meas_mbps > node->idle_mbps)
+		if (meas_mbps > node->idle_mbps) {
 			req_mbps = max(req_mbps, node->hyst_mbps);
+			node->idle_en = node->idle_length;
+		} else if (node->idle_en) {
+			req_mbps = max(req_mbps, node->hyst_mbps);
+			node->idle_en--;
+		}
 	}
 
 	/* Stretch the short sample window size, if the traffic is too low */
@@ -824,6 +835,9 @@ static DEVICE_ATTR_RW(hyst_trigger_count);
 show_attr(hyst_length);
 store_attr(hyst_length, 0U, 90U);
 static DEVICE_ATTR_RW(hyst_length);
+show_attr(idle_length);
+store_attr(idle_length, 0U, 90U);
+static DEVICE_ATTR_RW(idle_length);
 show_attr(idle_mbps);
 store_attr(idle_mbps, 0U, 2000U);
 static DEVICE_ATTR_RW(idle_mbps);
@@ -847,6 +861,7 @@ static struct attribute *dev_attr[] = {
 	&dev_attr_hist_memory.attr,
 	&dev_attr_hyst_trigger_count.attr,
 	&dev_attr_hyst_length.attr,
+	&dev_attr_idle_length.attr,
 	&dev_attr_idle_mbps.attr,
 	&dev_attr_use_ab.attr,
 	&dev_attr_mbps_zones.attr,
@@ -995,6 +1010,7 @@ int register_bw_hwmon(struct device *dev, struct bw_hwmon *hwmon)
 	node->hist_memory = 0;
 	node->hyst_trigger_count = 3;
 	node->hyst_length = 0;
+	node->idle_length = 0;
 	node->idle_mbps = 400;
 	node->use_ab = 1;
 	node->mbps_zones[0] = 0;
