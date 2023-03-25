@@ -85,6 +85,7 @@
 #endif
 #include <linux/hwid.h>
 
+#define CONFIG_QGKI_SYSTEM
 /**
  * Event handler installer helpers
  */
