@@ -19,6 +19,16 @@ static struct file_system_type incfs_fs_type = {
 	.fs_flags = 0
 };
 
+
+static ssize_t bugfix_inode_eviction_show(struct kobject *kobj,
+			 struct kobj_attribute *attr, char *buff)
+{
+	return snprintf(buff, PAGE_SIZE, "supported\n");
+}
+
+static struct kobj_attribute bugfix_inode_eviction_attr =
+	__ATTR_RO(bugfix_inode_eviction);
+
 static int __init init_incfs_module(void)
 {
 	int err = 0;
