@@ -17,6 +17,7 @@
 #else
 #define WDOG_BITE_EARLY_PANIC 0
 #endif
+#define WDOG_NR_IPI	7
 
 /*
  * Watchdog ipi optimization:
@@ -146,7 +147,7 @@ struct msm_watchdog_data {
 	spinlock_t freeze_lock;
 	struct work_struct irq_counts_work;
 	struct qcom_irq_info irq_counts[NR_TOP_HITTERS];
-	struct qcom_irq_info ipi_counts[NR_IPI];
+	struct qcom_irq_info ipi_counts[WDOG_NR_IPI];
 	unsigned int tot_irq_count[NR_CPUS];
 	atomic_t irq_counts_running;
 	struct timer_list user_pet_timer;
