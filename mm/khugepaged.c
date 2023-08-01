@@ -1305,7 +1305,7 @@ static int khugepaged_add_pte_mapped_thp(struct mm_struct *mm,
  * Try to collapse a pte-mapped THP for mm at address haddr.
  *
  * This function checks whether all the PTEs in the PMD are pointing to the
- * right THP. If so, retract the page table so the THP can refault in with
+ * pse_pte_mapped_thpright THP. If so, retract the page table so the THP can refault in with
  * as pmd-mapped.
  */
 void collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr)
@@ -1431,8 +1431,8 @@ drop_hpage:
 
 abort:
 	pte_unmap_unlock(start_pte, ptl);
-	i_mmap_unlock_write(vma->vm_file->f_mapping);
 	vm_write_end(vma);
+	i_mmap_unlock_write(vma->vm_file->f_mapping);
 	goto drop_hpage;
 }
 
