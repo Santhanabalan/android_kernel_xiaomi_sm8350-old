@@ -538,7 +538,7 @@ config MMHARDWARE_OTHER_DETECTION
 
 config PERF_HELPER
 	tristate "Record perflock messages"
-	default n
+	default y
 	depends on MIUI_OPTIMIZATIONS
 	help
 	  this module support record perf lock history and other perf messages.
