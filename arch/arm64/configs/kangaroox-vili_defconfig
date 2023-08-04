@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 5.4.242 Kernel Configuration
+# Linux/arm64 5.4.249 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="WeebX clang version 17.0.0 (https://github.com/llvm/llvm-project b5fa9af4ae4955289693ce4076871cd0c92d5684)"
 CONFIG_GCC_VERSION=0
@@ -1309,7 +1309,6 @@ CONFIG_HYFI_BRIDGE_HOOKS=y
 CONFIG_HAVE_NET_DSA=y
 # CONFIG_NET_DSA is not set
 # CONFIG_VLAN_8021Q is not set
-# CONFIG_DECNET is not set
 CONFIG_LLC=y
 # CONFIG_LLC2 is not set
 # CONFIG_ATALK is not set
@@ -1761,7 +1760,7 @@ CONFIG_HDCP_QSEECOM=y
 # CONFIG_HISI_HIKEY_USB is not set
 CONFIG_MI_HARDWARE_ID=y
 CONFIG_MMHARDWARE_OTHER_DETECTION=y
-# CONFIG_PERF_HELPER is not set
+CONFIG_PERF_HELPER=y
 # CONFIG_GPIO_TESTING_MODE is not set
 # CONFIG_BOOTUP_RECLAIM is not set
 # CONFIG_C2PORT is not set
@@ -1887,6 +1886,7 @@ CONFIG_SCSI_LOWLEVEL=y
 # CONFIG_SCSI_AIC94XX is not set
 # CONFIG_SCSI_MVSAS is not set
 # CONFIG_SCSI_MVUMI is not set
+# CONFIG_SCSI_DPT_I2O is not set
 # CONFIG_SCSI_ADVANSYS is not set
 # CONFIG_SCSI_ARCMSR is not set
 # CONFIG_SCSI_ESAS2R is not set
@@ -1962,7 +1962,6 @@ CONFIG_DM_UEVENT=y
 # CONFIG_DM_FLAKEY is not set
 CONFIG_DM_VERITY=y
 # CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG is not set
-CONFIG_DM_VERITY_AVB=y
 CONFIG_DM_VERITY_FEC=y
 # CONFIG_DM_SWITCH is not set
 # CONFIG_DM_LOG_WRITES is not set
